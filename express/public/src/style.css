@@ -1,0 +1,9 @@
+body {
+  background: #107896;
+  color: white;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  font-family: "Gill Sans", sans-serif;
+  font-size: 1em;
+}

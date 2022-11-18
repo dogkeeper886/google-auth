@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: google-auth
+  name: google-auth
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: google-auth
+  template:
+    metadata:
+      labels:
+        app: google-auth
+    spec:
+      containers:
+      - image: dogkeeper886/google-auth:0.57
+        imagePullPolicy: IfNotPresent
+        name: google-auth
+        resources:
+          limits:
+            cpu: 250m
+            ephemeral-storage: 1Gi
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            ephemeral-storage: 1Gi
+            memory: 512Mi        
+        env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: google-auth
+              key: API_KEY
+              optional: false
+        - name: TLS_CERT
+          valueFrom:
+            secretKeyRef:
+              name: my-tls-secret
+              key: tls.crt
+              optional: false
+        - name: TLS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: my-tls-secret
+              key: tls.key
+              optional: false                   
