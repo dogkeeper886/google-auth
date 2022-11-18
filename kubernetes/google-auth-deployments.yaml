@@ -15,7 +15,7 @@ spec:
         app: google-auth
     spec:
       containers:
-      - image: dogkeeper886/google-auth:0.57
+      - image: dogkeeper886/googleauth:0.1
         imagePullPolicy: IfNotPresent
         name: google-auth
         resources:

@@ -12,5 +12,5 @@ COPY express/index.js ./
 COPY express/public ./public
 
 RUN npm install
-EXPOSE 8080
+EXPOSE 8080 443
 CMD [ "npm", "start" ]
