@@ -1,3 +1,7 @@
+// Get URL
+const queryString = new URL(document.URL)
+console.info(queryString)
+
 // Handle generate button event
 function generate_button() {
     const anonymous_user_name = 'user03'
@@ -33,7 +37,6 @@ function generate_button() {
 
                 // Set timer 3 sec
                 setTimeout(() => {
-
                     // Reload
                     window.location.href = '/next.html'
                 }, 3000)
@@ -45,9 +48,5 @@ function generate_button() {
 
 }
 
-// Get URL
-const queryString = new URL(document.URL)
-console.info(queryString)
-console.info(queryString.hostname)
 // Listen to click event
 document.getElementById('generate').addEventListener('click', generate_button)
