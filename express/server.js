@@ -2,60 +2,16 @@
 const express = require('express')
 const morgan = require('morgan')
 const https = require('https')
-const fs = require('fs')
+require('dotenv').config()
 
 // global varible
-const http_port = 8080
-const https_port = 443
+const api_key = process.env.API_KEY
+const http_port = process.env.HTTP_PORT
+const https_port = process.env.HTTPS_PORT
+const tls_cert = process.env.TLS_CERT
+const tls_key = process.env.TLS_KEY
+//const tls_secret = get_tls_secret()
 //const client_id = '400508717450-1gfvls1mih0ikvrkpgk2pufh84i4fke5.apps.googleusercontent.com'
-const api_key = get_api_key()
-const tls_secret = get_tls_secret()
-
-// Check environment value and file system
-function get_api_key() {
-
-    // Setup varible
-    let result = null
-
-    if (fs.existsSync('integration.key')) {
-        // Read from file system
-        result = fs.readFileSync('integration.key', 'utf-8')
-
-    } else {
-        // Read from environment varible
-        result = process.env.API_KEY
-    }
-
-    // Return result
-    return result
-}
-
-// Check environment value and file system
-function get_tls_secret() {
-
-    // Setup varible
-    let tls_cert = null
-    let tls_key = null
-
-    if (fs.existsSync('cert.pem') && fs.existsSync('key.pem')) {
-
-        // Read from file system
-        tls_cert = fs.readFileSync('cert.pem', 'utf-8')
-        tls_key = fs.readFileSync('key.pem', 'utf-8')
-
-    } else {
-
-        // Read from environment varible
-        tls_cert = process.env.TLS_CERT
-        tls_key = process.env.TLS_KEY
-    }
-
-    // Return result
-    return {
-        key: tls_key,
-        cert: tls_cert
-    }
-}
 
 
 // Run express
@@ -65,12 +21,17 @@ const app = express()
 app.listen(http_port, () => console.info('Listen on port', http_port))
 
 // HTTPS
+
+const tls_secret = {
+    key: tls_key,
+    cert: tls_cert
+}
+
 https
     .createServer(tls_secret, app)
-    .listen(443, () => {
+    .listen(https_port, () => {
         console.info('Listen on port', https_port)
     })
-
 
 // Log
 app.use(morgan('combined'))
