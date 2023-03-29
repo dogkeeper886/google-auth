@@ -32,15 +32,15 @@ function generate_button() {
             document.getElementById('result').innerHTML = data.ReplyMessage
 
             // Check login status
-            if (data.ReplyMessage == 'Login succeeded') {
-                document.getElementById('generate').disabled = true
+            if (data.ReplyMessage != 'Login succeeded') return
+            
+            document.getElementById('generate').disabled = true
 
-                // Set timer 3 sec
-                setTimeout(() => {
-                    // Reload
-                    window.location.href = '/next.html'
-                }, 3000)
-            }
+            // Set timer 3 sec
+            setTimeout(() => {
+                // Reload
+                window.location.href = '/next.html'
+            }, 3000)
         })
         .catch((error) => {
             console.error('Error:', error)

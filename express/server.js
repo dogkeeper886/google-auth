@@ -1,7 +1,10 @@
 // Import
 const express = require('express')
 const morgan = require('morgan')
+const bodyParser = require('body-parser')
 const https = require('https')
+const fetch = require('node-fetch')
+
 require('dotenv').config()
 
 // global varible
@@ -41,13 +44,14 @@ app.use(express.static('public'))
 
 // Read json data
 app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // API login
 app.post('/login', (req, res) => {
     console.info(req.body)
 
     // Read varible from request body
-    const queryString = new URL(req.body.user_url)
+    const queryString = new URL(req.headers.referer)
     const params = queryString.searchParams
     const ue_ip = params.get('uip')
     const ue_mac = params.get('client_mac')
@@ -56,6 +60,7 @@ app.post('/login', (req, res) => {
 
     // Get value from params
     const nbi = params.get('nbiIP')
+    if (!nbi) return
     const requestURL = 'https://' + nbi + ':443/portalintf'
 
     // Prepare client authentication body
