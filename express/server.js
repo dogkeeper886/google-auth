@@ -4,8 +4,8 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const https = require('https')
 const fetch = require('node-fetch')
-
 require('dotenv').config()
+
 
 // global varible
 const api_key = process.env.API_KEY
@@ -15,7 +15,8 @@ const tls_cert = process.env.TLS_CERT
 const tls_key = process.env.TLS_KEY
 //const tls_secret = get_tls_secret()
 //const client_id = '400508717450-1gfvls1mih0ikvrkpgk2pufh84i4fke5.apps.googleusercontent.com'
-
+const anonymous_user_name = process.env.ANONYMOUIS_USER_NAME
+const anonymous_user_password = process.env.ANONYMOUS_USER_PASSWORD
 
 // Run express
 const app = express()
@@ -24,7 +25,6 @@ const app = express()
 app.listen(http_port, () => console.info('Listen on port', http_port))
 
 // HTTPS
-
 const tls_secret = {
     key: tls_key,
     cert: tls_cert
@@ -36,15 +36,18 @@ https
         console.info('Listen on port', https_port)
     })
 
+
 // Log
 app.use(morgan('combined'))
-
-// Static file
-app.use(express.static('public'))
 
 // Read json data
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+
+
+// Static file
+app.use(express.static('public'))
+
 
 // API login
 app.post('/login', (req, res) => {
@@ -80,37 +83,29 @@ app.post('/login', (req, res) => {
     // Debug
     console.info(clientAuthenticationBody)
 
-
     // Check the nbiIP before fetch
-    if (nbi) {
-        console.info('Start to fetch')
+    if (!nbi) return
 
-        // Request authentication
-        fetch(requestURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(clientAuthenticationBody),
+    // Request authentication
+    console.info('Start to fetch')
+    fetch(requestURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clientAuthenticationBody),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.info('Success:', data)
+
+            // Send result to frontend
+            res.send(JSON.stringify(data))
         })
-            .then((response) => response.json())
-            .then((data) => {
-                console.info('Success:', data)
+        .catch((error) => {
+            console.error('Error:', error)
+        })
 
-                // Send result to frontend
-                res.send(JSON.stringify(data))
-            })
-            .catch((error) => {
-                console.error('Error:', error)
-            })
-    } else {
-        console.info('Skip fetch')
-
-        // Send result to frontend
-        res.send(JSON.stringify(
-            { status: 'Skip fetch' }
-        ))
-    }
 })
 
 // API decrypt IP
@@ -173,4 +168,13 @@ app.post('/decrypt_ip', (req, res) => {
     }
 })
 
+// 
+app.get('/anonymous', (req, res) => {
+    res.send(JSON.stringify(
+        {
+            user_name: anonymous_user_name,
+            user_password: anonymous_user_password
+        }
+    ))
+})
 
